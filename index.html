@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<script src="main.js"></script>
+<link rel="stylesheet" href="main.css" />
+<meta charset=utf-8 />
+<title>ECE 2300 - Assembly to Bytecode Converter</title>
+</head>
+<body>
+<div id="wrap">
+  <div id="title">
+  <h1>Assembly to bytecode converter</h1>
+  <h2>ECE 2300</h2>
+  </div>
+
+  <div id="box">
+  
+  <div id="stage">
+    <h3>Assembly</h3>
+  <textarea id="instructions">HALT
+BLTZ R4, 2 
+ADDI R2, R0,    29
+SLL  R2, R2
+LB   R3, 0(R2)
+SB   R3, -2(R0)
+NOP</textarea><br />
+  <label for="start">Start address</label>
+  <input id="start" type="text" value="0" /><br />
+  <button id="convert">Convert</button>
+  </div>
+
+  <div id="result">
+    <h3>Verilog</h3>
+    <textarea disabled id="verilog">Click 'Convert' to see the resulting code.</textarea>
+  </div>
+
+  <div id="footer">written by Brandon Duffany, 2013 | see the source code on <a href="?">Github</a></div>
+  
+  </div>
+
+</div>
+</body>
+</html>

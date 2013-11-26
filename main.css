@@ -1,0 +1,69 @@
+#box, #title {
+  font-family: sans-serif;
+  margin: 30px auto;
+  overflow: auto;
+  width: 670px;
+}
+
+#title {
+  padding: 10px 30px;
+}
+
+#box {
+  padding: 30px;
+  background-color: #F3F3F3;
+  border-radius: 5px;
+  box-shadow: 0px 2px 3px gray;
+}
+
+#footer {
+  position: absolute;
+  padding: 20px;
+  color: gray;
+  font-size: small;
+  bottom: 0px;
+  right: 0px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 5px 0;
+}
+
+h1 {
+  font-size: large;
+}
+
+h2 {
+  font-size: medium;
+}
+
+h3, label {
+  font-size: small;
+}
+
+pre {
+  margin: 0;
+}
+
+#instructions, #result {
+  min-height: 300px;
+}
+
+#stage, #result {
+  float: left;
+}
+
+#verilog {
+  background-color: #F4F4F9;
+  min-width: 450px;
+  min-height: 300px;
+}
+
+#result {
+  width: 450px;
+  margin-left: 20px;
+}
+
+#start {
+  width: 50px;
+}
