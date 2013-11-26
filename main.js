@@ -173,7 +173,24 @@ function num_validate(e) {
 }
 
 $(document).ready(function() {
-  $('#start').keypress(num_validate);
+  // Allow only numeric inputs: http://stackoverflow.com/a/15832211
+  $('#start').keydown(function (e) {
+    function isSysKey(code) {
+    return (code === 40 || code === 38 ||
+            code === 13 || code === 39 || code === 27 ||
+            code === 35 ||
+            code === 36 || code === 37 || code === 38 ||
+            code === 16 || code === 17 || code === 18 ||
+            code === 20 || code === 37 || code === 9 ||
+            (code >= 112 && code <= 123));
+    }
+    var code = (e.keyCode ? e.keyCode : e.which), value;
+    if (isSysKey(code) || code === 8 || code === 46) return true;
+    if (e.shiftKey || e.altKey || e.ctrlKey) return;
+    if (code >= 48 && code <= 57) return true;
+    if (code >= 96 && code <= 105) return true;
+    return false;
+  });
   $('#convert').click(parse_all);
 });
 
