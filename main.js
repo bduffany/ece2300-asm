@@ -159,19 +159,6 @@ function parse_all() {
   }
 }
 
-function num_validate(e) {
-  var evt = e || window.event;
-  var key = evt.keyCode || evt.which;
-  key = String.fromCharCode( key );
-  var regex = /[0-9]/;
-  if( !regex.test(key) ) {
-    evt.returnValue = false;
-    if(evt.preventDefault) {
-      evt.preventDefault();
-    }
-  }
-}
-
 $(document).ready(function() {
   // Allow only numeric inputs: http://stackoverflow.com/a/15832211
   $('#start').keydown(function (e) {
