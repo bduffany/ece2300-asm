@@ -38,8 +38,24 @@ function rem_whitespace(str) {
   return str.replace(/\s+|\t+/g, ' ');
 }
 
+var labels = {};
+
+function match_label(str) {
+  return str.match(/^(#(([a-z]|[A-Z]|_|\d)+))/);
+}
+
+function process_label(instr, line, addr) {
+  var cleaned = rem_whitespace($.trim(instr.replace(/,+/g, '').replace(/\(|\)/g, ' ').toUpperCase()));
+  var m = match_label(cleaned);
+  if (m) {
+    var lbl = m[2];
+    labels[lbl] = addr;
+  }
+  return cleaned;
+}
+
 // Extract the bytecode for a single instruction [instr].
-function bytecode(instr, line) {
+function bytecode(instr, line, addr) {
   // Throw an error message and exit the program.
   function error(msg) {
     throw "Parse error" + (line || line === 0 ? " on line " + (line + 1) : "") + ": " + msg; 
@@ -54,12 +70,25 @@ function bytecode(instr, line) {
   }
   // Get the sign-extended 6-bit immediate value from str
   function imm_num(str) {
-    if (!str.match(/^-?\d+/)) {
+    var n, m, errmsg;
+    m = match_label(str);
+    if (m) {
+      if (labels[m[2]] === undefined) {
+        error("Undefined label " + m[2]);
+      }
+      console.log(m[2] + " has offset " + (2 * (labels[m[2]] - (1 + addr))));
+      console.log(addr);
+      console.log(labels[m[2]]);
+      n = 2 * (labels[m[2]] - (addr + 1));
+      errmsg = "Branch offset exceeds 6-bit representable range.";
+    } else if (!str.match(/^-?\d+/)) {
       error("Invalid immediate value.");
+    } else {
+      n = parseInt(str, 10);
+      errmsg = "Immediate value exceeds 6-bit representable range.";
     }
-    var n = parseInt(str, 10);
     if (n < -32 || n > 31) {
-      error("Immediate value exceeds 6-bit representable range.");
+      error(errmsg);
     }
     return num_to_bin(n, 6);
   }
@@ -82,7 +111,10 @@ function bytecode(instr, line) {
     }
     return bin;
   }
-  instr = rem_whitespace($.trim(instr.replace(/,+/g, '').replace(/\(|\)/g, ' ').toUpperCase()));
+  var m = match_label(instr);
+  if (m) {
+    instr = $.trim(instr.replace(m[0], ""));
+  }
   var toks = instr.split(' ');
   console.log(toks);
   var op = toks[0];
@@ -136,20 +168,34 @@ function bytecode(instr, line) {
 }
 
 function parse_all() {
-  var start = parseInt($('#start').val(), 10) || 0;
-  var offs = 0;
-  function process(instr, i) {
+  var start = parseInt($('#start').val(), 10) || 0,
+      offs1 = 0, 
+      offs2 = 0;
+  labels = {};
+  // Determines branch offset for labels and cleans up an instruction
+  function pass1(instr, i) {
+    if(instr == "") {
+      --offs1;
+      return "";
+    }
+    return process_label(instr, i, i + start + offs1);
+  }
+  // Converts the instructions to bytecode
+  function pass2(instr, i) {
+    var addr;
     if (instr == "") {
-      --offs;
+      --offs2;
       return "\n";
     }
-    return "mem[" + (i + start + offs) + "] <= 16'b" + bytecode(instr, i) + 
+    addr = i + start + offs2;
+    return "mem[" + addr + "] <= 16'b" + bytecode(instr, i, addr) + 
             "; // " + $.trim(instr) + '\n';
   }
   var instrs = $('#instructions').val().split('\n');
   $('#verilog').val('');
   try {
-    results = $.map(instrs, process);
+    var instrs_cleaned = $.map(instrs, pass1);
+    var results = $.map(instrs_cleaned, pass2);
     console.log(results);
     $(results).each(function(_, res) {
       $('#verilog').val($('#verilog').val() + res);

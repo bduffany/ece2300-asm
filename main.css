@@ -2,7 +2,7 @@
   font-family: sans-serif;
   margin: 30px auto;
   overflow: auto;
-  width: 670px;
+  width: 850px;
 }
 
 #title {
@@ -49,14 +49,18 @@ pre {
   min-height: 300px;
 }
 
+#instructions {
+  width: 280px;
+}
+
 #stage, #result {
   float: left;
 }
 
 #verilog {
   background-color: #F4F4F9;
-  min-width: 450px;
-  min-height: 300px;
+  width: 535px;
+  height: 300px;
 }
 
 #result {
